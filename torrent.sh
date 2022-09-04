@@ -4,7 +4,8 @@
 # IFS=$'\n\t'
 
 # TODO Check aria2c dependencies
-# TODO check if source and movie directories exists
+# TODO Check arguments - If no arguments use options directory
+# TODO Check if mkv file is in subfolder, and create it if needed
 
 # options #
 ###########
@@ -12,19 +13,32 @@
 source="./"
 movies="/mnt/medias.2/Movies"
 
-
 # code    #
 ###########
 
-readarray -d '' torrentlist < <(find $source -iname "*.torrent" -print0)
-# torrentlist=("$1")
+if [[ ! -e $movies ]]; then
+  echo "[ERRO] Movies directory doesn't exist." 
+  exit 0
+fi
+
+# readarray -d '' torrentlist < <(find $source -iname "*.torrent" -print0)
+torrentlist=("$1")
 total=${#torrentlist[@]}
 current=1
 
 for torrent in "${torrentlist[@]}"
 do
-  #TODO Exclude sample.mkv files
-  filename=$(aria2c -S "$torrent" | grep "[0-9]|" | grep "mkv" | sed 's/.*\/\(.*mkv\)/\1/g') 
+  folder="empty"
+
+  filename=$(aria2c -S "$torrent" | grep "[0-9]" | grep "|"  | grep "mkv" | grep -vi "sample" | sed 's/.*\/\(.*mkv\)/\1/g')  
+
+# folder=$(aria2c -S "$torrent" | grep "[0-9]" | grep "|" | grep "mkv" | grep -vi "sample" | sed 's/.*\/\(.*\)\/.*.mkv/\1/g')
+
+  echo "FOLDER : $folder"
+
+  if [[ $folder != "empty" ]]; then
+    mkdir "$folder"
+  fi
 
 echo "[$current/$total] [INFO] $filename"
 
@@ -43,7 +57,7 @@ else
   fi
 
   if [[ ${#array[@]} == 1 ]]; then
-    echo "[$current/$total]" Found ${array[0]} 
+    echo "[$current/$total]" Found "${array[0]}"
     ln -s "${array[0]}" "$filename"
   fi
 
