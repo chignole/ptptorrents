@@ -5,25 +5,30 @@
 
 # TODO Check aria2c dependencies
 # TODO Check arguments - If no arguments use options directory
+# Usage : ./torrent.sh {foo.torrent} - if no argument specified, the script
+#         will scan source folder for torrents and process them.
 
-# options #
-###########
+# Options
+#   source : Source directory with torrents you want to process
+#   movies : Directory containing the movies you want to use for symlinks
 
 source="./"
 movies="/mnt/medias.2/Movies"
 
-# code    #
-###########
+# Code
 
 if [[ ! -e $movies ]]; then
   echo "[ERRO] Movies directory doesn't exist." 
   exit 0
 fi
 
-readarray -d '' torrentlist < <(find $source -iname "*.torrent" -print0)
-# torrentlist=("$1")
-total=${#torrentlist[@]}
+if [[ -n $1 ]]; then
+  torrentlist=("$1")
+else
+  readarray -d '' torrentlist < <(find $source -iname "*.torrent" -print0)
+fi
 current=1
+total=${#torrentlist[@]}
 
 for torrent in "${torrentlist[@]}"
 do
