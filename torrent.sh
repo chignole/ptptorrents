@@ -22,6 +22,8 @@ if [[ ! -e $movies ]]; then
   exit 0
 fi
 
+# Process torrent file specified in argument - If no arguments process every file
+# in source folder
 if [[ -n $1 ]]; then
   torrentlist=("$1")
 else
@@ -30,6 +32,7 @@ fi
 current=1
 total=${#torrentlist[@]}
 
+# Process every torrent in the torrentlist array
 for torrent in "${torrentlist[@]}"
 do
   unset folder
@@ -38,6 +41,7 @@ do
 
   pathname=$(aria2c -S "$torrent" | grep "[0-9]" | grep "|"  | grep "mkv" | grep -vi "sample")
 
+  # Check for subfolders
   if [[ "$pathname" =~ /.*/ ]]; then
     echo "[$current/$total] [INFO] Subfolder detected"
     folder=$(echo "$pathname" | sed 's/.*\/\(.*\)\/.*mkv/\1/g')
