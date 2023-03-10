@@ -5,6 +5,10 @@
 
 # TODO Check aria2c dependencies
 # TODO Check arguments - If no arguments use options directory
+# TODO Add torrents source folder
+# TODO Check tracker
+# TODO Add consume mode
+#
 # Usage : ./torrent.sh {foo.torrent} - if no argument specified, the script
 #         will scan source folder for torrents and process them.
 
@@ -61,8 +65,8 @@ if [[ -n $find ]]; then
  	    ln -s "$movie" "$filename"
     fi
 else
-	echo "[$current/$total] [INFO] No match found found for $filename"
-	shortname=$(echo "$filename" | sed 's/\(.\{5\}\).*/\1/g')
+  echo "[$current/$total] [INFO] No match found found for $filename"
+  shortname=$(echo "$filename" | sed 's/\(.\{5\}\).*/\1/g')
   readarray -d '' array < <(find $movies -iname "$shortname*.mkv" -print0)
   if [[ ${#array[@]} == 0 ]]; then
 	  shortname=$(echo "$filename" | sed 's/\(.\{2\}\).*/\1/g')
